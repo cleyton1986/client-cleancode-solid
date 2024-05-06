@@ -1,11 +1,18 @@
 version: "3.8"
 services:
   api:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: server-api-go # Assegura que o nome do app seja passado para o Dockerfile
     ports:
-      - "8080:8080"
+      - "8000:8000" # A porta exposta pela aplicação no container é a 8080
     depends_on:
       - db
+    networks:
+      - api-network
+
   db:
     image: postgres
     environment:
@@ -14,3 +21,18 @@ services:
       POSTGRES_PASSWORD: password
     ports:
       - "5432:5432"
+    networks:
+      - api-network
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - 80:80
+    networks:
+      - api-network
+
+networks:
+  api-network:
+    driver: bridge
