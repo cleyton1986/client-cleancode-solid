@@ -10,3 +10,5 @@
 
 # Folder deploy
 bin
+vendor
+.scannerwork*
